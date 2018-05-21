@@ -19,7 +19,7 @@ InternetTravel::~InternetTravel()
         delete car;
 }
 
-void InternetTravel::loadCars(const string& dataFile)
+void InternetTravel::loadVehicles(const string& dataFile)
 {
     printf("Loading cars data...\n");
 
@@ -46,7 +46,7 @@ void InternetTravel::loadCars(const string& dataFile)
             passengers.push_back(node);
         }
 
-        Car* car = new Car(id, node, passengers);
+        Vehicle* car = new Vehicle(id, node, passengers);
         m_cars.push_back(car);
     }
     fclose(f);
@@ -57,7 +57,7 @@ void InternetTravel::startup(const string& dataDir)
     printf("Internet traffic system is starting...\n");
 
     m_map->load(dataDir + "/" + NODE_DATA, dataDir + "/" + EDGE_DATA);
-    loadCars(dataDir + "/" + CAR_DATA);
+    loadVehicles(dataDir + "/" + CAR_DATA);
 }
 
 /*

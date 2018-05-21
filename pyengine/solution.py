@@ -22,7 +22,7 @@ class Solution(object):
         self.node_y     = result[cnt]; cnt += 1
 
     def print(self):
-        print("Car %d at (%.2f, %.2f)" % (self.car_id, self.car_x, self.car_y))
+        print("Vehicle %d at (%.2f, %.2f)" % (self.car_id, self.car_x, self.car_y))
         print("Passenger ID: ")
         print(self.pass_id)
         print(self.pass_x)

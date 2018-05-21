@@ -13,7 +13,7 @@ var srcMark = null,
   dstMark = null,
   carMarks = [],
   otherMarks = [],
-  currentCarMark = null;
+  currentVehicleMark = null;
 
 var carIcon = new AMap.Icon({
   size: new AMap.Size(16, 32),
@@ -26,7 +26,7 @@ var carActivedIcon = new AMap.Icon({
   imageSize: new AMap.Size(16, 32)
 });
 
-function getCarSpeed(zoom) {
+function getVehicleSpeed(zoom) {
   return 10000 / Math.pow(2, (zoom - 8) / 1.5);
 }
 
@@ -60,7 +60,7 @@ function newMark(position, icon, label) {
   });
 }
 
-function showCars(cars) {
+function showVehicles(cars) {
   clearMarks();
 
   cars.forEach((car, i) => {
@@ -77,10 +77,10 @@ function showCars(cars) {
       carMarks[i].setzIndex(99);
 
       AMap.event.addListener(carMarks[i], "click", event => {
-        if (currentCarMark) currentCarMark.setIcon(carIcon);
-        currentCarMark = carMarks[i];
+        if (currentVehicleMark) currentVehicleMark.setIcon(carIcon);
+        currentVehicleMark = carMarks[i];
         carMarks[i].setIcon(carActivedIcon);
-        showCarPath(i);
+        showVehiclePath(i);
       });
     }
     carMarks[i].setAngle(car.angle);
@@ -100,7 +100,7 @@ function showPassengers(pass) {
   });
 }
 
-function showCarPath(index) {
+function showVehiclePath(index) {
   if (!pathSimplifierIns) return;
 
   let car = cars[index];
@@ -114,16 +114,16 @@ function showCarPath(index) {
 
   navi = pathSimplifierIns.createPathNavigator(0, {
     loop: true,
-    speed: getCarSpeed(map.getZoom())
+    speed: getVehicleSpeed(map.getZoom())
   });
 
   navi.start();
 }
 
 function clearMarks(clearSrcDst = false) {
-  if (currentCarMark) {
-    currentCarMark.setIcon(carIcon);
-    currentCarMark = null;
+  if (currentVehicleMark) {
+    currentVehicleMark.setIcon(carIcon);
+    currentVehicleMark = null;
   }
   pathSimplifierIns && pathSimplifierIns.setData(null);
   otherMarks.forEach(mark => mark.hide());
@@ -149,7 +149,7 @@ function onClickActionButton() {
         alert("没有合适的出租车！");
         return;
       }
-      showCars(cars);
+      showVehicles(cars);
       map.setFitView();
       $("#btn-action").prop("disabled", true);
     });
@@ -197,7 +197,7 @@ function initMap() {
   });
 
   AMap.event.addListener(map, "zoomend", function() {
-    if (navi) navi.setSpeed(getCarSpeed(map.getZoom()));
+    if (navi) navi.setSpeed(getVehicleSpeed(map.getZoom()));
   });
   document
     .getElementById("btn-action")

@@ -41,7 +41,7 @@ void Map::load(const string& nodeDataFile, const string& edgeDataFile)
 
     fclose(f);
 
-    tree_setup();
+    tree_setup(edgeDataFile.c_str(), nodeDataFile.c_str(), NULL, false);
 }
 
 double Map::distance(const Node* a, const Node* b) const

@@ -7,11 +7,11 @@
 
 class Map;
 
-class Car
+class Vehicle
 {
 public:
-    Car(int id, const Node* pos, const NodeList& passengers);
-    virtual ~Car();
+    Vehicle(int id, const Node* pos, const NodeList& passengers);
+    virtual ~Vehicle();
 
     int getId() const { return m_id; }
 
@@ -35,6 +35,6 @@ private:
                             const Map* map) const;
 };
 
-typedef std::vector<const Car*> CarList;
+typedef std::vector<const Vehicle*> VehicleList;
 
 #endif // CAR_H

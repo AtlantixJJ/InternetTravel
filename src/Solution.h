@@ -4,19 +4,19 @@
 #include "Const.h"
 #include "Node.h"
 
-class Car;
+class Vehicle;
 
 struct Solution
 {
     Solution() : dis(Const::INF) {}
-    Solution(const Car* car, const NodeList& path, double dis,
+    Solution(const Vehicle* car, const NodeList& path, double dis,
              double detour_dis1, double detour_dis2)
         : car(car), path(path), dis(dis), detour_dis1(detour_dis1),
           detour_dis2(detour_dis2), value(dis + detour_dis2)
     {
     }
 
-    const Car* car;
+    const Vehicle* car;
     NodeList path;
     std::vector<int> order;
 

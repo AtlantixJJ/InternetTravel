@@ -1,16 +1,17 @@
-#include<iostream>
-#include<cstdio>
-#include<cstdlib>
-#include<cstring>
-#include<vector>
-#include<ctime>
-#include<fstream>
-#include<algorithm>
-#include<map>
-#include<cmath>
-#include<queue>
-#include<sys/time.h>
-#include<metis.h>
+#include <iostream>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <vector>
+#include <ctime>
+#include <fstream>
+#include <algorithm>
+#include <map>
+#include <assert.h>
+#include <cmath>
+#include <queue>
+#include <sys/time.h>
+#include <metis.h>
 int times[10];//辅助计时变量；
 int cnt_type0,cnt_type1;
 
@@ -19,9 +20,9 @@ const bool DEBUG_=false;
 const bool Optimization_G_tree_Search=true;//是否开启全连接加速算法
 const bool Optimization_KNN_Cut=true;//是否开启KNN剪枝查询算法
 const bool Optimization_Euclidean_Cut=true;//是否开启Catch查询中基于欧几里得距离剪枝算法
-const char Edge_File[]="../data/road.nedge";//第一行两个整数n,m表示点数和边数，接下来m行每行三个整数U,V,C表示U->V有一条长度为C的边
-const char Node_File[]="../data/road.cnode";//共N行每行一个整数两个实数id,x,y表示id结点的经纬度(但输入不考虑id，只顺序从0读到n-1，整数N在Edge文件里)
-const int Global_Scheduling_Cars_Per_Request=30000000;//每次规划精确计算前至多保留的车辆数目(时间开销)
+char Edge_File[]="../data/road.nedge";//第一行两个整数n,m表示点数和边数，接下来m行每行三个整数U,V,C表示U->V有一条长度为C的边
+char Node_File[]="../data/road.cnode";//共N行每行一个整数两个实数id,x,y表示id结点的经纬度(但输入不考虑id，只顺序从0读到n-1，整数N在Edge文件里)
+const int Global_Scheduling_Vehicles_Per_Request=30000000;//每次规划精确计算前至多保留的车辆数目(时间开销)
 const double Unit=0.1;//路网文件的单位长度/m
 const double R_earth=6371000.0;//地球半径，用于输入经纬度转化为x,y坐标
 const double PI=acos(-1.0);
@@ -2403,17 +2404,17 @@ void read()
 		printf("Read node file done.\n");
 	}
 }
-void save()
+void save(const char *fname)
 {
 	printf("begin save\n");
-	freopen("GP_Tree.data","w",stdout);
+	freopen(fname, "w", stdout);
 	tree.save();
 	freopen("/dev/tty","w",stdout);
 	printf("save_over\n");
 }
-void load()
+void load(const char *fname)
 {
-	freopen("GP_Tree.data","r",stdin);
+	freopen(fname, "r", stdin);
 	tree.load();
 	freopen("/dev/tty","r",stdin);
 } 
@@ -2454,7 +2455,7 @@ class Global_Scheduling//依托于G_Tree的全局调度算法，主要处理拼�
 				sort(ans.begin(),ans.end());
 				//根据距离保留前K个
 				vector<int> new_set;
-				for(int i=0;i<Global_Scheduling_Cars_Per_Request&&i<ans.size();i++)
+				for(int i=0;i<Global_Scheduling_Vehicles_Per_Request&&i<ans.size();i++)
 					new_set.push_back(ans[i].second);
 				car_set=new_set;
 			}
@@ -2657,13 +2658,39 @@ class Global_Scheduling//依托于G_Tree的全局调度算法，主要处理拼�
 		vector<vehicle>cars;
 }scheduling;
 
-extern void tree_setup() {
-	printf("%s %s\n", Edge_File, Node_File);
+/// Setup GPTree given edge and node file path. If index file is loaded
+extern void tree_setup(const char *edge_file, const char *node_file, const char *index_file, bool is_load) {
+	memcpy(Edge_File, edge_file, strlen(edge_file)+1);
+	memcpy(Node_File, node_file, strlen(node_file)+1);
+
+	printf("Edge File: %s\nNode File: %s\n", Edge_File, Node_File);
+	
 	init();
+
 	read();
+
 	Additional_Memory=2*G.n*log2(G.n);
+
 	printf("G.real_border:%d\n",G.real_node());
-	tree.build();
+
+	// Build index
+	if(is_load) {
+		assert(index_file != NULL);
+		printf("Load from index file: %s\n", index_file);
+		load(index_file);
+	} else {
+		printf("Build index file from scratch.\n");
+		tree.build();
+	}
+}
+
+/// To avoid long computation in index building
+extern void tree_build_save(const char *fname) {
+	save(fname);
+}
+
+extern void tree_build_load(const char *fname) {
+	load(fname);
 }
 
 extern int tree_search(int S, int T) {

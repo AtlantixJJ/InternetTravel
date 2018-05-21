@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "Car.h"
+#include "Vehicle.h"
 #include "Map.h"
 #include "Solution.h"
 
@@ -25,9 +25,9 @@ public:
 private:
 private:
     Map* m_map;
-    CarList m_cars;
+    VehicleList m_cars;
 
-    void loadCars(const std::string& dataFile);
+    void loadVehicles(const std::string& dataFile);
 };
 
 #endif // INTERNET_TRAFFIC_H

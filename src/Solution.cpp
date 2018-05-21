@@ -1,6 +1,6 @@
 #include <cstdio>
 
-#include "Car.h"
+#include "Vehicle.h"
 #include "Solution.h"
 
 void Solution::print() const

@@ -1,4 +1,4 @@
-#include "Car.h"
+#include "Vehicle.h"
 #include "Map.h"
 
 using namespace std;
@@ -18,15 +18,15 @@ const int PERMUTATIONS[5][24][4] = {
     },
 };
 
-Car::Car(int id, const Node* pos, const NodeList& passengers)
+Vehicle::Vehicle(int id, const Node* pos, const NodeList& passengers)
     : m_id(id), m_passenger_count(passengers.size()), m_pos(pos),
       m_passengers(passengers)
 {
 }
 
-Car::~Car() {}
+Vehicle::~Vehicle() {}
 
-void Car::print() const
+void Vehicle::print() const
 {
     printf("car #%d: %d %s\n", m_id, m_passenger_count,
            m_pos->toString().c_str());
@@ -36,7 +36,7 @@ void Car::print() const
     printf("]\n");
 }
 
-double Car::getMinDistance(vector<int>& dstIds, int srcId,
+double Vehicle::getMinDistance(vector<int>& dstIds, int srcId,
                            const double disMatrix[6][6])
 {
     int n = dstIds.size();
@@ -70,7 +70,7 @@ double Car::getMinDistance(vector<int>& dstIds, int srcId,
     return res;
 }
 
-bool Car::earthDistanceCheck(const Node* src, const Node* dst,
+bool Vehicle::earthDistanceCheck(const Node* src, const Node* dst,
                              const Map* map) const
 {
     if (m_passenger_count >= 4)
@@ -80,7 +80,7 @@ bool Car::earthDistanceCheck(const Node* src, const Node* dst,
     return d2 <= 10;
 }
 
-Solution Car::query(const Node* src, const Node* dst, const Map* map) const
+Solution Vehicle::query(const Node* src, const Node* dst, const Map* map) const
 {
     if (!earthDistanceCheck(src, dst, map))
         return Solution();

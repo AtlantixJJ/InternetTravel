@@ -6,8 +6,10 @@
 #include "Node.h"
 
 /// These functions are defined in GPTree
+extern void tree_build_load(const char *fname);
+extern void tree_build_save(const char *fname);
 extern int tree_search(int S, int T);
-extern void tree_setup();
+extern void tree_setup(const char *edge_file, const char *node_file, const char *index_file, bool is_load);
 extern int tree_find_path(int S, int T, std::vector<int> &order);
 
 struct Edge
