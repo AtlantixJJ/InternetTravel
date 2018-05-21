@@ -19,7 +19,7 @@ using namespace std;
 const bool DEBUG_=false;
 const bool Optimization_G_tree_Search=true;//是否开启全连接加速算法
 const bool Optimization_KNN_Cut=true;//是否开启KNN剪枝查询算法
-const bool Optimization_Euclidean_Cut=true;//是否开启Catch查询中基于欧几里得距离剪枝算法
+const bool Optimization_Euclidean_Cut=false;//是否开启Catch查询中基于欧几里得距离剪枝算法
 char Edge_File[]="../data/road.nedge";//第一行两个整数n,m表示点数和边数，接下来m行每行三个整数U,V,C表示U->V有一条长度为C的边
 char Node_File[]="../data/road.cnode";//共N行每行一个整数两个实数id,x,y表示id结点的经纬度(但输入不考虑id，只顺序从0读到n-1，整数N在Edge文件里)
 const int Global_Scheduling_Vehicles_Per_Request=30000000;//每次规划精确计算前至多保留的车辆数目(时间开销)
@@ -161,7 +161,7 @@ void load_vector_pair(vector<pair<int,int> > &v)
 {
 	int n, first, second;
 	fread(&n, sizeof(int), 1, bin_fp);
-	for(int i=0;i<(int)v.size();i++) {
+	for(int i=0;i<n;i++) {
 		fread(&first, sizeof(int), 1, bin_fp);
 		fread(&second, sizeof(int), 1, bin_fp);
 		v.push_back(pair<int, int>(first, second));
@@ -249,23 +249,31 @@ struct Graph//无向图结构
 	vector<int>head,list,next,cost;//邻接表
 	Graph(){clear();}
 	~Graph(){clear();}
-	void save()//保存结构信息(stdout输出)
+	void save()
 	{
-		printf("%d %d %d\n",n,m,tot);
+		fwrite(&n, sizeof(int), 1, bin_fp);
+		fwrite(&m, sizeof(int), 1, bin_fp);
+		fwrite(&tot, sizeof(int), 1, bin_fp);
+		printf("Graph: %d %d %d\n",n,m,tot);
 		save_vector(id);
 		save_vector(head);
 		save_vector(list);
 		save_vector(next);
 		save_vector(cost);
+		printf("Graph size: %d %d %d %d %d\n", id.size(), head.size(), list.size(), next.size(), cost.size());
 	}
-	void load()//读取结构信息(stdout输出)
+	void load()
 	{
-		scanf("%d%d%d",&n,&m,&tot);
+		fread(&n, sizeof(int), 1, bin_fp);
+		fread(&m, sizeof(int), 1, bin_fp);
+		fread(&tot, sizeof(int), 1, bin_fp);
+		printf("Graph: %d %d %d\n",n,m,tot);
 		load_vector(id);
 		load_vector(head);
 		load_vector(list);
 		load_vector(next);
 		load_vector(cost);
+		printf("Graph size: %d %d %d %d %d\n", id.size(), head.size(), list.size(), next.size(), cost.size());
 	}
 	void add_D(int a,int b,int c)//加入一条a->b权值为c的有向边
 	{
@@ -789,22 +797,22 @@ struct Matrix//矩阵
 	int **a;
 	void save()
 	{
-		printf("%d\n",n);
+		//printf("Mat:%d\n",n);
+		fwrite(&n, sizeof(int), 1, bin_fp);
 		for(int i=0;i<n;i++)
-		{
 			for(int j=0;j<n;j++)
-				printf("%d ",a[i][j]);
-			printf("\n");
-		}
+				fwrite(&a[i][j], sizeof(int), 1, bin_fp);
 	}
 	void load()
 	{
-		scanf("%d",&n);
+		fread(&n, sizeof(int), 1, bin_fp);
+		//printf("Mat:%d\n",n);
+		if(a != NULL) clear();
 		a=new int*[n];
-		for(int i=0;i<n;i++)a[i]=new int[n];
+		for(int i=0;i<n;i++) a[i]=new int[n];
 		for(int i=0;i<n;i++)
 			for(int j=0;j<n;j++)
-				scanf("%d",&a[i][j]);
+				fread(&a[i][j], sizeof(int), 1, bin_fp);
 	}
 	void cover(int x)
 	{
@@ -827,6 +835,7 @@ struct Matrix//矩阵
 	{
 		for(int i=0;i<n;i++)delete [] a[i];
 		delete [] a;
+		a = NULL;
 	}
 	void floyd()//对矩阵a进行floyd
 	{
@@ -890,11 +899,18 @@ struct G_Tree
 		vector<pair<int,int> >min_car_dist;//车辆集合中距离每个border最近的<car_dist,node_id>
 		void save()
 		{
-			printf("%d %d %d %d %d %d %d\n",n,father,part,deep,catch_id,catch_bound,min_border_dist);
-			for(int i=0;i<part;i++)printf("%d ",son[i]);cout<<endl;
+			fwrite(&n, sizeof(int), 1, bin_fp);
+			fwrite(&father, sizeof(int), 1, bin_fp);
+			fwrite(&part, sizeof(int), 1, bin_fp);
+			fwrite(&deep, sizeof(int), 1, bin_fp);
+			fwrite(&catch_id, sizeof(int), 1, bin_fp);
+			fwrite(&catch_bound, sizeof(int), 1, bin_fp);
+			fwrite(&min_border_dist, sizeof(int), 1, bin_fp);
+			for(int i = 0; i < part; i++)
+				fwrite(&son[i], sizeof(int), 1, bin_fp);
 			save_vector(color);
-			dist.save();
-			order.save();
+			dist.save(); // Matrix
+			order.save(); // Matrix
 			save_map_int_pair(borders);
 			save_vector(border_in_father);
 			save_vector(border_in_son);
@@ -906,10 +922,19 @@ struct G_Tree
 		}
 		void load()
 		{
-			scanf("%d%d%d%d%d%d%d",&n,&father,&part,&deep,&catch_id,&catch_bound,&min_border_dist);
-			if(son!=NULL)delete[] son;
+			fread(&n, sizeof(int), 1, bin_fp);
+			fread(&father, sizeof(int), 1, bin_fp);
+			fread(&part, sizeof(int), 1, bin_fp);
+			fread(&deep, sizeof(int), 1, bin_fp);
+			fread(&catch_id, sizeof(int), 1, bin_fp);
+			fread(&catch_bound, sizeof(int), 1, bin_fp);
+			fread(&min_border_dist, sizeof(int), 1, bin_fp);
+
+			if(son != NULL) delete[] son;
 			son=new int[part];
-			for(int i=0;i<part;i++)scanf("%d",&son[i]);
+			for(int i = 0; i < part; i++)
+				fread(&son[i], sizeof(int), 1, bin_fp);
+
 			load_vector(color);
 			dist.load();
 			order.load();
@@ -989,29 +1014,36 @@ struct G_Tree
 	void save()
 	{
 		G.save();
-		printf("%d %d %d\n",root,node_tot,node_size);
+		fwrite(&root, sizeof(int), 1, bin_fp);
+		fwrite(&node_tot, sizeof(int), 1, bin_fp);
+		fwrite(&node_size, sizeof(int), 1, bin_fp);
+		printf("Tree: %d %d %d\n",root,node_tot,node_size);
+
 		save_vector(id_in_node);
 		save_vector_vector(car_in_node);
 		save_vector(car_offset);
+		printf("Tree size: %d %d %d\n", id_in_node.size(), car_in_node.size(), car_offset.size());
 		for(int i=0;i<node_size;i++)
-		{
-			printf("\n");
 			node[i].save();
-		}
+		
 	}
 	void load()
 	{
 		printf("load_begin\n");
 		G.load();
-		scanf("%d%d%d",&root,&node_tot,&node_size);
+		fread(&root, sizeof(int), 1, bin_fp);
+		fread(&node_tot, sizeof(int), 1, bin_fp);
+		fread(&node_size, sizeof(int), 1, bin_fp);
+		printf("Tree: %d %d %d\n",root,node_tot,node_size);
+
 		load_vector(id_in_node);
 		load_vector_vector(car_in_node);
 		load_vector(car_offset);
+		printf("Tree size: %d %d %d\n", id_in_node.size(), car_in_node.size(), car_offset.size());
+		
 		node=new Node[G.n*2+2];
 		for(int i=0;i<node_size;i++)
-		{
 			node[i].load();
-		}
 	}
 	void write()
 	{

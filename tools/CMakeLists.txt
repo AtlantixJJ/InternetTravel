@@ -1,0 +1,6 @@
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../src/)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../build/lib/)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../build/src/)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../build/thirdparty/)
+add_executable(create_index create_index.cpp)
+target_link_libraries(create_index ${PYTHON_LIBRARIES} engine)

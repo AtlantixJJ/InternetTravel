@@ -40,8 +40,8 @@ void Map::load(const string& nodeDataFile, const string& edgeDataFile, const std
         m_edges.push_back(new Edge(getNode(a), getNode(b), len));
 
     fclose(f);
-    tree_setup(edgeDataFile.c_str(), nodeDataFile.c_str(), NULL, false);
-    //tree_setup(edgeDataFile.c_str(), nodeDataFile.c_str(), indexFile.c_str(), true);
+    //tree_setup(edgeDataFile.c_str(), nodeDataFile.c_str(), NULL, false);
+    tree_setup(edgeDataFile.c_str(), nodeDataFile.c_str(), indexFile.c_str(), true);
 }
 
 double Map::distance(const Node* a, const Node* b) const
