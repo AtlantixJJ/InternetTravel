@@ -1,0 +1,19 @@
+.amap-marker-label {
+  border: none;
+  background-color: transparent;
+  padding: 0;
+  cursor: inherit;
+}
+
+.mark-label {
+  color: white;
+  text-align: center;
+  width: 24px;
+  margin-top: 5px;
+}
+
+#action-panel {
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+}
