@@ -42,6 +42,4 @@ struct Node : public Location
     int id;
 };
 
-typedef std::vector<const Node*> NodeList;
-
 #endif // NODE_H

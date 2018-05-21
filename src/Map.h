@@ -6,6 +6,7 @@
 #include "Node.h"
 
 /// These functions are defined in GPTree
+// 从index文件中
 extern void tree_build_load(const char *fname);
 extern void tree_build_save(const char *fname);
 extern int tree_search(int S, int T);
@@ -60,11 +61,11 @@ public:
 
     int recover_roadmap_path(const Node *a, const Node *b, std::vector<const Node*> &order) const;
 
-    void load(const std::string& nodeDataFile, const std::string& edgeDataFile);
+    void load(const std::string& nodeDataFile, const std::string& edgeDataFile, const std::string& indexFile);
 
 private:
     int m_node_count, m_edge_count;
-    NodeList m_nodes;
+    std::vector<const Node*> m_nodes;
     EdgeList m_edges;
 };
 

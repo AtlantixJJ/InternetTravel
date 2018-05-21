@@ -1,3 +1,4 @@
+*.data
 test
 bk
 __pycache__

@@ -15,7 +15,7 @@ Map::~Map()
         delete edge;
 }
 
-void Map::load(const string& nodeDataFile, const string& edgeDataFile)
+void Map::load(const string& nodeDataFile, const string& edgeDataFile, const std::string& indexFile)
 {
     printf("Loading map data...\n");
 
@@ -41,7 +41,7 @@ void Map::load(const string& nodeDataFile, const string& edgeDataFile)
 
     fclose(f);
 
-    tree_setup(edgeDataFile.c_str(), nodeDataFile.c_str(), NULL, false);
+    tree_setup(edgeDataFile.c_str(), nodeDataFile.c_str(), indexFile.c_str(), true);
 }
 
 double Map::distance(const Node* a, const Node* b) const

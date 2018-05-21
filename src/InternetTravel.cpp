@@ -6,20 +6,20 @@
 
 using namespace std;
 
-const char CAR_DATA[] = "car.txt";
-const char NODE_DATA[] = "road.cnode";
-const char EDGE_DATA[] = "road.nedge";
+const char CAR_FNAME[] = "car.txt";
+const char NODE_FNAME[] = "road.cnode";
+const char EDGE_FNAME[] = "road.nedge";
+const char INDEX_FNAME[] = "index.data";
 
 InternetTravel::InternetTravel() : m_map(new Map()) {}
 
 InternetTravel::~InternetTravel()
 {
     delete m_map;
-    for (auto car : m_cars)
-        delete car;
+    for(auto car : m_cars) delete car;
 }
 
-void InternetTravel::loadVehicles(const string& dataFile)
+void InternetTravel::loadCars(const string& dataFile)
 {
     printf("Loading cars data...\n");
 
@@ -27,17 +27,19 @@ void InternetTravel::loadVehicles(const string& dataFile)
 
     FILE* f = fopen(dataFile.c_str(), "r");
 
-    int id, n, nodeId;
+    int i, id, n, nodeId;
     double x, y;
-    for (int i = 0;
-         fscanf(f, "%d %d %lf,%lf,%d", &id, &n, &x, &y, &nodeId) != EOF; i++)
+    int flag = 0;
+    for (i = 0;; i++)
     {
+        flag = fscanf(f, "%d %d %lf,%lf,%d", &id, &n, &x, &y, &nodeId);
+        if(flag == EOF) break;
         assert(i == id);
 
         const Node* node = m_map->getNode(nodeId);
         assert(node != nullptr && node->x == x && node->y == y);
 
-        NodeList passengers;
+        std::vector<const Node*> passengers;
         for (int j = 0; j < n; j++)
         {
             fscanf(f, "%lf,%lf,%d", &x, &y, &nodeId);
@@ -52,22 +54,22 @@ void InternetTravel::loadVehicles(const string& dataFile)
     fclose(f);
 }
 
-void InternetTravel::startup(const string& dataDir)
+void InternetTravel::init(const string& dataDir)
 {
     printf("Internet traffic system is starting...\n");
 
-    m_map->load(dataDir + "/" + NODE_DATA, dataDir + "/" + EDGE_DATA);
-    loadVehicles(dataDir + "/" + CAR_DATA);
+    m_map->load(dataDir + "/" + NODE_FNAME, dataDir + "/" + EDGE_FNAME, dataDir + "/" + INDEX_FNAME);
+    loadCars(dataDir + "/" + CAR_FNAME);
 }
 
-/*
+
 SolutionList InternetTravel::query(double st_x, double st_y, double ed_x, double ed_y) {
     const Node *src = NULL, *dst = NULL;
     src = m_map->getNode(st_x, st_y);
     dst = m_map->getNode(ed_x, ed_y);
     return query(src, dst);
 }
-*/
+
 
 SolutionList InternetTravel::query(const Node* src, const Node* dst)
 {
@@ -75,8 +77,7 @@ SolutionList InternetTravel::query(const Node* src, const Node* dst)
            dst->toString().c_str());
 
     SolutionList all, res;
-    for (auto car : m_cars)
-    {
+    for (auto car : m_cars) {
         Solution sol = car->query(src, dst, m_map);
         if (sol.isOk())
             all.push_back(sol);

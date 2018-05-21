@@ -10,14 +10,14 @@ class Map;
 class Vehicle
 {
 public:
-    Vehicle(int id, const Node* pos, const NodeList& passengers);
+    Vehicle(int id, const Node* pos, const std::vector<const Node*>& passengers);
     virtual ~Vehicle();
 
     int getId() const { return m_id; }
 
     const Node* getPos() const { return m_pos; }
 
-    const NodeList* getPassenger() const { return &m_passengers; }
+    const std::vector<const Node*>* getPassenger() const { return &m_passengers; }
 
     void print() const;
 
@@ -26,7 +26,7 @@ public:
 private:
     int m_id, m_passenger_count;
     const Node* m_pos;
-    NodeList m_passengers;
+    std::vector<const Node*> m_passengers;
 
     static double getMinDistance(std::vector<int>& dstIds, int srcId,
                                  const double disMatrix[6][6]);
@@ -34,7 +34,5 @@ private:
     bool earthDistanceCheck(const Node* src, const Node* dst,
                             const Map* map) const;
 };
-
-typedef std::vector<const Vehicle*> VehicleList;
 
 #endif // CAR_H

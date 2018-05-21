@@ -9,7 +9,7 @@ class Vehicle;
 struct Solution
 {
     Solution() : dis(Const::INF) {}
-    Solution(const Vehicle* car, const NodeList& path, double dis,
+    Solution(const Vehicle* car, const std::vector<const Node*>& path, double dis,
              double detour_dis1, double detour_dis2)
         : car(car), path(path), dis(dis), detour_dis1(detour_dis1),
           detour_dis2(detour_dis2), value(dis + detour_dis2)
@@ -17,7 +17,7 @@ struct Solution
     }
 
     const Vehicle* car;
-    NodeList path;
+    std::vector<const Node*> path;
     std::vector<int> order;
 
     double dis;         // distance between the car and current passenger

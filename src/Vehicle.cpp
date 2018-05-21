@@ -18,7 +18,7 @@ const int PERMUTATIONS[5][24][4] = {
     },
 };
 
-Vehicle::Vehicle(int id, const Node* pos, const NodeList& passengers)
+Vehicle::Vehicle(int id, const Node* pos, const std::vector<const Node*>& passengers)
     : m_id(id), m_passenger_count(passengers.size()), m_pos(pos),
       m_passengers(passengers)
 {
@@ -85,7 +85,7 @@ Solution Vehicle::query(const Node* src, const Node* dst, const Map* map) const
     if (!earthDistanceCheck(src, dst, map))
         return Solution();
 
-    NodeList nodes = {m_pos, src, dst};
+    std::vector<const Node*> nodes = {m_pos, src, dst};
     for (auto node : m_passengers)
         nodes.push_back(node);
 
@@ -137,7 +137,7 @@ Solution Vehicle::query(const Node* src, const Node* dst, const Map* map) const
     if (detour_dis1 > 10 || detour_dis2 > 10)
         return Solution();
 
-    NodeList path = {m_pos, src};
+    std::vector<const Node*> path = {m_pos, src};
     for (auto i : dstIds)
     {
         if (i == 2)

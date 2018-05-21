@@ -15,19 +15,18 @@ public:
 
     const Map* getMap() const { return m_map; }
 
-    void startup(const std::string& dataDir);
+    void init(const std::string& dataDir);
 
-    // Query by (x, y)
-    // SolutionList query(double st_x, double st_y, double ed_x, double ed_y);
     // Query by node
     SolutionList query(const Node* src, const Node* dst);
+    // Query by (x, y)
+    SolutionList query(double st_x, double st_y, double ed_x, double ed_y);
 
-private:
 private:
     Map* m_map;
-    VehicleList m_cars;
+    std::vector<const Vehicle*> m_cars;
 
-    void loadVehicles(const std::string& dataFile);
+    void loadCars(const std::string& dataFile);
 };
 
 #endif // INTERNET_TRAFFIC_H

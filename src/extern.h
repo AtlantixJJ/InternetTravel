@@ -43,7 +43,7 @@ int init(const char *dir) {
 
     engine = new InternetTravel();
     printf("Dir: %s\n", dir);
-    engine->startup(dir);
+    engine->init(dir);
 
     return 0;
 }

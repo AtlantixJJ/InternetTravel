@@ -1,10 +1,12 @@
 #include "InternetTravel.h"
 
-int main()
+/// Need to pass in : ./main <data_dir> <index_fname>
+int main(int argc, char **argv)
 {
     InternetTravel* engine = new InternetTravel();
 
-    engine->startup("../data");
+    engine->init(argv[1]);
+    tree_build_save(argv[2]);
 
     int srcId = 2333, dstId = 2334;
     const Node* src = engine->getMap()->getNode(srcId);
