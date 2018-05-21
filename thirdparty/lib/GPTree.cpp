@@ -1364,7 +1364,7 @@ struct G_Tree
 	void push_borders_up(int x, vector<int> &dist1, int type)//将S到结点x边界点的最短路长度记录在dist1中，计算S到x.father真实border的距离更新dist1 type==0上推,type==1下推
 	{
 		if (node[x].father == 0)return;
-		times[5] -= clock();
+		//times[5] -= clock();
 		int y = node[x].father;
 		vector<int>dist2(node[y].borders.size(), INF);
 		for (int i = 0; i<node[x].borders.size(); i++)
@@ -1377,15 +1377,15 @@ struct G_Tree
 		begin = new int[node[x].borders.size()];
 		end = new int[node[y].borders.size()];
 		int tot0 = 0, tot1 = 0;
-		times[5] += clock();
-		times[6] -= clock();
+		//times[5] += clock();
+		//times[6] -= clock();
 		for (int i = 0; i<dist2.size(); i++)
 		{
 			if (dist2[i]<INF)begin[tot0++] = i;
 			else if (node[y].border_in_father[i] != -1)end[tot1++] = i;
 		}
-		times[6] += clock();
-		times[7] -= clock();
+		//times[6] += clock();
+		//times[7] -= clock();
 		if (type == 0)
 		{
 			for (int i = 0; i<tot0; i++)
@@ -1426,7 +1426,7 @@ struct G_Tree
 		}
 		}
 		*/
-		times[7] += clock();
+		//times[7] += clock();
 		dist1 = dist2;
 		delete[] begin;
 		delete[] end;
@@ -1642,6 +1642,9 @@ struct G_Tree
 		//计算LCA
 		int i, j, k, p;
 		int LCA, x = id_in_node[S], y = id_in_node[T];
+
+		//printf("St1\n");
+
 		if (node[x].deep<node[y].deep)swap(x, y);
 		while (node[x].deep>node[y].deep)x = node[x].father;
 		while (x != y){ x = node[x].father; y = node[y].father; }
@@ -1649,12 +1652,15 @@ struct G_Tree
 		vector<int>dist[2], dist_;
 		dist[0].push_back(0);
 		dist[1].push_back(0);
+
 		x = id_in_node[S], y = id_in_node[T];
+		//printf("St2\n");
 		//朴素G-Tree计算
 		for (int t = 0; t<2; t++)
 		{
 			if (t == 0)p = x;
 			else p = y;
+
 			while (node[p].father != LCA)
 			{
 				push_borders_up(p, dist[t], t);
@@ -1663,6 +1669,9 @@ struct G_Tree
 			if (t == 0)x = p;
 			else y = p;
 		}
+
+		//printf("St3\n");
+
 		vector<int>id[2];//子结点border在LCA中的border序列编号
 		for (int t = 0; t<2; t++)
 		{
@@ -2738,7 +2747,10 @@ extern void tree_build_load(const char *fname) {
 }
 
 extern int tree_search(int S, int T) {
-	return tree.search(S, T);
+	//printf("Tree search extern\n");
+	int res = tree.search(S, T);
+	//printf("extern Done.\n");
+	return res;
 }
 
 extern int tree_find_path(int S, int T, std::vector<int> &order) {

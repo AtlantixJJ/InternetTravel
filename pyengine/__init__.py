@@ -35,7 +35,8 @@ def destroy():
     return lib.destroy()
 
 def search_id(srcID, dstID):
-    res = engine_search_id_(srcID, dstID)
+    PARAM = [ctypes.c_int(num) for num in [srcID, dstID]]
+    res = engine_search_id_(*PARAM)
     sol = SolutionList(res)
     sol.parse()
     return sol
@@ -55,15 +56,17 @@ def get_node_in_map(x, y):
 def test(dataDir):
     print("Test init")
     init(dataDir)
-    print("Test get nearest point on map")
-    res = get_node_in_map(110.0, 40.5)
-    print(res)
     print("Test search id")
     for i in range(30):
         sol = search_id(2333, 2334)
     print("Test search (x,y)")
     for i in range(30):
         sol = search_xy(110.0, 40.5, 110.2, 40.7)
+    print("Test get nearest point on map")
+    res = get_node_in_map(110.0, 40.5)
+    print(res)
+    sol = search_id(2333, 2334)
+    sol.print()
     print("Test destory")
     destroy()
     print("Done")

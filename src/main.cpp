@@ -6,7 +6,6 @@ int main(int argc, char **argv)
     InternetTravel* engine = new InternetTravel();
 
     engine->init(argv[1]);
-    tree_build_save(argv[2]);
 
     int srcId = 2333, dstId = 2334;
     const Node* src = engine->getMap()->getNode(srcId);
@@ -15,7 +14,7 @@ int main(int argc, char **argv)
 
     for (auto sol : res)
         sol.print();
-
+    printf("Total sol: %d\n", res.size());
     delete engine;
 
 

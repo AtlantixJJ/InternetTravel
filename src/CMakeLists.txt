@@ -13,4 +13,4 @@ add_executable(main ${SRCS})
 target_link_libraries(main ${PYTHON_LIBRARIES} metis gptree metis)
 
 add_library(engine SHARED ${SRCS} )
-target_link_libraries(engine ${PYTHON_LIBRARIES} metis gptree)
+target_link_libraries(engine ${PYTHON_LIBRARIES} gptree)

@@ -44,3 +44,7 @@ class SolutionList(object):
         for single in self.raw_result:
             self.result.append(Solution(single))
             # self.result[-1].print()
+
+    def print(self):
+        for s in self.result:
+            s.print()

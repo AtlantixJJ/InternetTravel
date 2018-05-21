@@ -51,7 +51,8 @@ double Map::distance(const Node* a, const Node* b) const
 
 double Map::roadmap_distance(const Node* a, const Node* b) const
 {
-    return tree_search(a->id, b->id) / 1000.0;
+    double res = tree_search(a->id, b->id) / 1000.0;
+    return res;
 }
 
 int Map::recover_roadmap_path(const Node* a, const Node* b,
