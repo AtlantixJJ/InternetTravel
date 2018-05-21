@@ -39,6 +39,7 @@ const bool DEBUG1=false;
 struct timeval tv;
 long long ts, te;
 static int rootp = 0;
+FILE *bin_fp = NULL;
 struct Heap//双指针大根堆
 {
 	Heap(){clear();}
@@ -113,88 +114,99 @@ struct Heap//双指针大根堆
 };
 void save_vector(const vector<int> &v)
 {
-	printf("%d ",(int)v.size());
-	for(int i=0;i<(int)v.size();i++)printf("%d ",v[i]);
-	printf("\n");
+	int n = v.size();
+	fwrite(&n, sizeof(int), 1, bin_fp);
+	for(int i = 0; i < v.size(); i ++)
+		fwrite(&v[i], sizeof(int), 1, bin_fp);
 }
+
 void load_vector(vector<int> &v)
 {
 	v.clear();
-	int n,i,j;
-	scanf("%d",&n);
-	for(i=0;i<n;i++)
-	{
-		scanf("%d",&j);
-		v.push_back(j);
+	int n, i, tmp;
+	fread(&n, sizeof(int), 1, bin_fp);
+	for(i=0; i < n; i++) {
+		fread(&tmp, sizeof(int), 1, bin_fp);
+		v.push_back(tmp);
 	}
 }
 void save_vector_vector(const vector<vector<int> > &v)
 {
-	printf("%d\n",(int)v.size());
-	for(int i=0;i<(int)v.size();i++)save_vector(v[i]);
-	printf("\n");
+	int n = v.size();
+	fwrite(&n, sizeof(int), 1, bin_fp);
+	for(int i = 0; i < n; i++)
+		save_vector(v[i]);
 }
 void load_vector_vector(vector<vector<int> > &v)
 {
-	v.clear();
-	int n,i,j;
-	scanf("%d",&n);
-	vector<int>ls;
-	for(i=0;i<n;i++)
+	int n, i, tmp;
+	fread(&n, sizeof(int), 1, bin_fp);
+	vector<int> line;
+	for(i = 0; i < n; i++)
 	{
-		load_vector(ls);
-		v.push_back(ls);
+		load_vector(line);
+		v.push_back(line);
 	}
 }
 void save_vector_pair(const vector<pair<int,int> > &v)
 {
-	printf("%d ",(int)v.size());
-	for(int i=0;i<(int)v.size();i++)printf("%d %d ",v[i].first,v[i].second);
-	printf("\n");
+	int n = v.size();
+	fwrite(&n, sizeof(int), 1, bin_fp);
+	for(int i=0;i<(int)v.size();i++) {
+		fwrite(&v[i].first, sizeof(int), 1, bin_fp);
+		fwrite(&v[i].second, sizeof(int), 1, bin_fp);
+	}
 }
 void load_vector_pair(vector<pair<int,int> > &v)
 {
-	v.clear();
-	int n,i,j,k;
-	scanf("%d",&n);
-	for(i=0;i<n;i++)
-	{
-		scanf("%d%d",&j,&k);
-		v.push_back(make_pair(j,k));
+	int n, first, second;
+	fread(&n, sizeof(int), 1, bin_fp);
+	for(int i=0;i<(int)v.size();i++) {
+		fread(&first, sizeof(int), 1, bin_fp);
+		fread(&second, sizeof(int), 1, bin_fp);
+		v.push_back(pair<int, int>(first, second));
 	}
 }
 void save_map_int_pair(map<int,pair<int,int> > &h)
 {
-	printf("%d\n",h.size());
+	int n = h.size(), key, first, second;
+	fwrite(&n, sizeof(int), 1, bin_fp);
 	map<int,pair<int,int> >::iterator iter;
-	for(iter=h.begin();iter!=h.end();iter++)
-		printf("%d %d %d\n",iter->first,iter->second.first,iter->second.second);
+	for(iter=h.begin();iter!=h.end();iter++) {
+		fwrite(&iter->first, sizeof(int), 1, bin_fp);
+		fwrite(&iter->second.first, sizeof(int), 1, bin_fp);
+		fwrite(&iter->second.second, sizeof(int), 1, bin_fp);
+	}
 }
 void load_map_int_pair(map<int,pair<int,int> > &h)
 {
-	int n,i,j,k,l;
-	scanf("%d",&n);
-	for(i=0;i<n;i++)
-	{
-		scanf("%d%d%d",&j,&k,&l);
-		h[j]=make_pair(k,l);
+	int n, key, first, second;
+	fread(&n, sizeof(int), 1, bin_fp);
+	for(int i = 0; i < n; i ++) {
+		fread(&key, sizeof(int), 1, bin_fp);
+		fread(&first, sizeof(int), 1, bin_fp);
+		fread(&second, sizeof(int), 1, bin_fp);
+		h[key] = make_pair(first, second);
 	}
 }
 void save_map_int_int(map<int,int> &h)
 {
-	printf("%d\n",h.size());
+	int n = h.size(), first, second;
+	fwrite(&n, sizeof(int), 1, bin_fp);
 	map<int,int>::iterator iter;
-	for(iter=h.begin();iter!=h.end();iter++)
-		printf("%d %d\n",iter->first,iter->second);
+	for(iter=h.begin();iter!=h.end();iter++) {
+		fwrite(&iter->first, sizeof(int), 1, bin_fp);
+		fwrite(&iter->second, sizeof(int), 1, bin_fp);
+	}
 }
 void load_map_int_int(map<int,int> &h)
 {
-	int n,i,j,k;
-	scanf("%d",&n);
-	for(i=0;i<n;i++)
-	{
-		scanf("%d%d",&j,&k);
-		h[j]=k;
+	int n, first, second;
+	fread(&n, sizeof(int), 1, bin_fp);
+	for(int i = 0; i < n; i ++) {
+		fread(&first, sizeof(int), 1, bin_fp);
+		fread(&second, sizeof(int), 1, bin_fp);
+		h[first] = second;
 	}
 }
 struct coor{coor(double a=0.0,double b=0.0):x(a),y(b){}double x,y;};
@@ -2404,19 +2416,19 @@ void read()
 		printf("Read node file done.\n");
 	}
 }
-void save(const char *fname)
-{
-	printf("begin save\n");
-	freopen(fname, "w", stdout);
+void save(const char *fname) {
+	printf("Start saving index.\n");
+	bin_fp = fopen(fname, "wb");
 	tree.save();
-	freopen("/dev/tty","w",stdout);
-	printf("save_over\n");
+	fclose(bin_fp);
+	printf("Index file saved.\n");
 }
-void load(const char *fname)
-{
-	freopen(fname, "r", stdin);
+void load(const char *fname) {
+	printf("Start loading index.\n");
+	bin_fp = fopen(fname, "rb");
 	tree.load();
-	freopen("/dev/tty","r",stdin);
+	fclose(bin_fp);
+	printf("Index file loaded.\n");
 } 
 
 class Global_Scheduling//依托于G_Tree的全局调度算法，主要处理拼车的哈密顿路径规划
