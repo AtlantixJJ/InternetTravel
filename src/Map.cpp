@@ -60,7 +60,7 @@ int Map::recover_roadmap_path(const Node* a, const Node* b,
 {
     vector<int> ider;
     int dist = tree_find_path(a->id, b->id, ider);
-    for (auto iter = ider.begin(); iter != ider.end(); iter++)
+    for (auto iter = ider.begin() + 1; iter != ider.end(); iter++)
     {
         order.push_back(m_nodes[*iter]);
     }

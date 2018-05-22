@@ -23,16 +23,19 @@ public:
 
     Solution query(const Node* src, const Node* dst, const Map* map) const;
 
+    /// Given the source, enumerate the arriving order, and store in order
+    static double getMinDist(std::vector<int>& order, int srcId,
+                                 const double all_dist[6][6]);
+
+private:
+    /// simple filter
+    bool filter(const Node* src, const Node* dst,
+                            const Map* map) const;
+
 private:
     int m_id, m_passenger_count;
     const Node* m_pos;
     std::vector<const Node*> m_passengers;
-
-    static double getMinDistance(std::vector<int>& dstIds, int srcId,
-                                 const double disMatrix[6][6]);
-
-    bool earthDistanceCheck(const Node* src, const Node* dst,
-                            const Map* map) const;
 };
 
 #endif // CAR_H

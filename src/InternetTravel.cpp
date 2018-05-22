@@ -36,6 +36,7 @@ void InternetTravel::loadCars(const string& dataFile)
         if(flag == EOF) break;
         assert(i == id);
 
+        /// Car position must be consistent with node file
         const Node* node = m_map->getNode(nodeId);
         assert(node != nullptr && node->x == x && node->y == y);
 
@@ -43,6 +44,7 @@ void InternetTravel::loadCars(const string& dataFile)
         for (int j = 0; j < n; j++)
         {
             fscanf(f, "%lf,%lf,%d", &x, &y, &nodeId);
+            /// Passenger pos must be consistent with node file
             const Node* node = m_map->getNode(nodeId);
             assert(node != nullptr && node->x == x && node->y == y);
             passengers.push_back(node);
@@ -56,7 +58,7 @@ void InternetTravel::loadCars(const string& dataFile)
 
 void InternetTravel::init(const string& dataDir)
 {
-    printf("Internet travel system is starting...\n");
+    printf("Internet travel system is initializing...\n");
 
     m_map->load(dataDir + "/" + NODE_FNAME, dataDir + "/" + EDGE_FNAME, dataDir + "/" + INDEX_FNAME);
     loadCars(dataDir + "/" + CAR_FNAME);
@@ -73,22 +75,26 @@ SolutionList InternetTravel::query(double st_x, double st_y, double ed_x, double
 
 SolutionList InternetTravel::query(const Node* src, const Node* dst)
 {
-    printf("Current passenger's route: %s -> %s\n", src->toString().c_str(),
-           dst->toString().c_str());
-
-    SolutionList all, res;
+    SolutionList tmp, res;
     for (auto car : m_cars) {
         Solution sol = car->query(src, dst, m_map);
-        if (sol.isOk())
-            all.push_back(sol);
-        if (all.size() >= 100)
+        if (sol.is_valid()) {
+            printf("Recover path.\n");
+            vector<const Node*> path = {sol.path[0]};
+            for (int i = 0; i < sol.path.size() - 1; i ++)
+                m_map->recover_roadmap_path(sol.path[i], sol.path[i+1], path);
+            printf("Recover done.\n");
+            sol.path = path;
+            tmp.push_back(sol);
+        }
+        if (tmp.size() >= 100)
             break;
     }
-    printf("%d\n", all.size());
-    sort(all.begin(), all.end());
+    printf("Total solution numer: %d\n", tmp.size());
+    sort(tmp.begin(), tmp.end());
 
-    for (int i = 0; i < 5 && i < all.size(); i++)
-        res.push_back(all[i]);
+    for (int i = 0; i < 5 && i < tmp.size(); i++)
+        res.push_back(tmp[i]);
 
     return res;
 }

@@ -3,6 +3,7 @@
 
 using namespace std;
 
+/// Directly store all the permutations of n <= 5
 const int FACTORIAL[5] = {1, 1, 2, 6, 24};
 const int PERMUTATIONS[5][24][4] = {
     {},
@@ -36,115 +37,111 @@ void Vehicle::print() const
     printf("]\n");
 }
 
-double Vehicle::getMinDistance(vector<int>& dstIds, int srcId,
-                           const double disMatrix[6][6])
+double Vehicle::getMinDist(vector<int>& order, int srcId,
+                           const double all_dist[6][6])
 {
-    int n = dstIds.size();
+    int prev, n = order.size();
     double res = Const::INF;
-    vector<int> resList = dstIds;
+    vector<int> res_order = order;
 
-    if (!n)
-        return 0;
+    if (n == 0) return 0;
 
-    for (int i = 0; i < FACTORIAL[n]; i++)
-    {
+    for (int i = 0; i < FACTORIAL[n]; i++) {
         vector<int> temp;
         double d = 0;
-        for (int j = 0, pred = srcId; j < n; j++)
-        {
-            int now = dstIds[PERMUTATIONS[n][i][j]];
-            d += disMatrix[pred][now];
-            if (d >= res)
-                break;
-            temp.push_back(now);
-            pred = now;
+        prev = srcId;
+        for (int j = 0; j < n; j++) {
+            int cur = order[PERMUTATIONS[n][i][j]];
+            d += all_dist[prev][cur];
+            if (d >= res) break; // early exit
+            temp.push_back(cur);
+            prev = cur;
         }
-        if (d < res)
-        {
+        if (d < res) {
             res = d;
-            resList = temp;
+            res_order = temp;
         }
     }
 
-    dstIds = resList;
+    order = res_order;
     return res;
 }
 
-bool Vehicle::earthDistanceCheck(const Node* src, const Node* dst,
+bool Vehicle::filter(const Node* src, const Node* dst,
                              const Map* map) const
 {
+    /// Passenger limit
     if (m_passenger_count >= 4)
         return false;
 
+    /// If the pick-up distance is larger than 10 km, then discard
     double d2 = map->distance(m_pos, src);
     return d2 <= 10;
 }
 
 Solution Vehicle::query(const Node* src, const Node* dst, const Map* map) const
 {
-    if (!earthDistanceCheck(src, dst, map))
+    printf("Car query.\n");
+    /// filter not passed, return an empty solution
+    if (!filter(src, dst, map))
         return Solution();
 
+    /// Get distance matrix for all points    
     std::vector<const Node*> nodes = {m_pos, src, dst};
     for (auto node : m_passengers)
         nodes.push_back(node);
 
-    double disMatrix[6][6];
-    memset(disMatrix, 0, sizeof(disMatrix));
+    double all_dist[6][6];
+    memset(all_dist, 0, sizeof(all_dist));
     for (int i = 0; i < nodes.size(); i++)
         for (int j = 0; j < i; j++)
         {
-            disMatrix[i][j] = disMatrix[j][i] =
+            all_dist[i][j] = all_dist[j][i] =
                 map->roadmap_distance(nodes[i], nodes[j]);
-            if (disMatrix[0][1] > 10)
+            if (all_dist[0][1] > 10)
                 return Solution();
         }
 
-    double d2 = disMatrix[0][1];
-    double d4 = disMatrix[1][2];
+    /// d2 : car->src distance
+    double d2 = all_dist[0][1];
+    /// d4 : src->dst distance
+    double d4 = all_dist[1][2];
 
-    /* car: 0
-     * src: 1
-     * dst: 2
-     */
-    vector<int> dstIds;
+    /// enumerate passenger order
+    vector<int> order;
     for (int i = 0; i < m_passengers.size(); i++)
-        dstIds.push_back(i + 3);
+        order.push_back(i + 3); // car src dst is 0, 1, 2
 
-    double d1 = getMinDistance(dstIds, 0, disMatrix);
+    /// original distance: car & all pass
+    double d1 = getMinDist(order, 0, all_dist);
 
-    dstIds.push_back(2);
-    double d3 = getMinDistance(dstIds, 1, disMatrix);
+    /// dist after pick up: src & all pass & dst
+    order.push_back(2);
+    double d3 = getMinDist(order, 1, all_dist);
 
-    double detour_dis1 = d2 + d3 - d1;
-    double detour_dis2 = -d4;
+    /// Total dist
+    order.push_back(1);
+    double d5 = getMinDist(order, 0, all_dist);
 
-    // current passenge is arrived
-    int srcId = 1;
-    for (auto i : dstIds)
-    {
-        detour_dis2 += disMatrix[i][srcId];
-        srcId = i;
-        if (i == 2)
-            break;
-    }
+    double detour_dis1 = d5 - d1;
+    double detour_dis2 = d3 - d4;
 
-    // printf("#%d %s %s %s\n", m_id, m_pos->toString().c_str(),
-    //        src->toString().c_str(), dst->toString().c_str());
-    // printf("\t d1=%lf d2=%lf d3=%lf d4=%lf d3'=%lf\n", d1, d2, d3, d4,
-    //        detour_dis2 + d4);
-
-    if (detour_dis1 > 10 || detour_dis2 > 10)
+    if (detour_dis1 > 10 || detour_dis2 > 10) {
+        printf("No solution.\n");
         return Solution();
-
-    std::vector<const Node*> path = {m_pos, src};
-    for (auto i : dstIds)
-    {
-        if (i == 2)
-            path.push_back(dst);
-        else
-            path.push_back(m_passengers[i - 3]);
     }
 
-    return Solution(this, path, d2, detour_dis1, detour_dis2);
+    std::vector<const Node*> pass_order = {m_pos};
+    printf("Permute done.\n");
+    for (auto i : order)
+    {
+        if (i == 1)
+            pass_order.push_back(src);
+        else if (i == 2)
+            pass_order.push_back(dst);
+        else if (i >= 3)
+            pass_order.push_back(m_passengers[i - 3]);
+    }
+    printf("Vehicle done.\n");
+    return Solution(this, pass_order, d2, detour_dis1, detour_dis2);
 }

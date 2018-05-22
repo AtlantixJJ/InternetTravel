@@ -28,7 +28,7 @@ struct Solution
 
     void print() const;
 
-    bool isOk() const { return dis <= 10; }
+    bool is_valid() const { return dis <= 10; }
 
     bool operator<(const Solution& sol) const
     {

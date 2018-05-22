@@ -19,7 +19,7 @@ using namespace std;
 const bool DEBUG_=false;
 const bool Optimization_G_tree_Search=true;//是否开启全连接加速算法
 const bool Optimization_KNN_Cut=true;//是否开启KNN剪枝查询算法
-const bool Optimization_Euclidean_Cut=false;//是否开启Catch查询中基于欧几里得距离剪枝算法
+const bool Optimization_Euclidean_Cut=true;//是否开启Catch查询中基于欧几里得距离剪枝算法
 char Edge_File[]="../data/road.nedge";//第一行两个整数n,m表示点数和边数，接下来m行每行三个整数U,V,C表示U->V有一条长度为C的边
 char Node_File[]="../data/road.cnode";//共N行每行一个整数两个实数id,x,y表示id结点的经纬度(但输入不考虑id，只顺序从0读到n-1，整数N在Edge文件里)
 const int Global_Scheduling_Vehicles_Per_Request=30000000;//每次规划精确计算前至多保留的车辆数目(时间开销)
@@ -1757,8 +1757,6 @@ struct G_Tree
 			return 0;
 		}
 		//计算LCA
-		times[0] -= clock();
-		times[4] -= clock();
 		int i, j, k, p;
 		int LCA, x = id_in_node[S], y = id_in_node[T];
 		if (node[x].deep<node[y].deep)swap(x, y);
@@ -1771,9 +1769,6 @@ struct G_Tree
 		x = id_in_node[S], y = id_in_node[T];
 		//朴素G-Tree计算
 		cnt_type1++;
-		//printf("LCA=%d x=%d y=%d\n",LCA,x,y);
-		times[4] += clock();
-		times[2] -= clock();
 		for (int t = 0; t<2; t++)
 		{
 			if (t == 0)p = x;
@@ -1786,8 +1781,6 @@ struct G_Tree
 			if (t == 0)x = p;
 			else y = p;
 		}
-		times[2] += clock();
-		times[3] -= clock();
 		vector<int>id[2];//子结点border在LCA中的border序列编号
 		for (int t = 0; t<2; t++)
 		{
@@ -1802,9 +1795,6 @@ struct G_Tree
 				}
 			while (dist[t].size()>id[t].size()){ dist[t].pop_back(); }
 		}
-		times[3] += clock();
-		//最终配对
-		times[1] -= clock();
 		int MIN = INF;
 		int S_ = -1, T_ = -1;//最优路径在LCA中borders连接的编号
 		for (i = 0; i<(int)dist[0].size(); i++)
@@ -1873,10 +1863,6 @@ struct G_Tree
 	}
 	void find_path_border(int x, int S, int T, vector<int> &v, int rev)//返回结点x中编号为S到T的border的结点路径，存储在vector<int>中，将除了起点S以外的部分S+1~T，push到v尾部,rev=0表示正序，rev=1表示逆序
 	{
-		/*printf("find:x=%d S=%d T=%d\n",x,S,T);
-		printf("node:%d\n",x);
-		node[x].write();
-		printf("\n\n\n\n");*/
 		if (node[x].order.a[S][T] == -1)
 		{
 			if (rev == 0)v.push_back(node[x].border_id[T]);
