@@ -123,8 +123,18 @@ Solution Vehicle::query(const Node* src, const Node* dst, const Map* map) const
     order.push_back(1);
     double d5 = getMinDist(order, 0, all_dist);
 
+    double d6 = -d4;
+    bool start = false;
+    for(int i = 0; i < order.size()-1; i ++) {
+        if(i == 1) // src of new passenger
+            start = true;
+        if(start) d6 += all_dist[order[i]][order[i+1]];
+        if(i == 2) // dst of new passenger
+            break;
+    }
+
     double detour_dis1 = d5 - d1;
-    double detour_dis2 = d3 - d4;
+    double detour_dis2 = d6 - d4;
 
     if (detour_dis1 > 10 || detour_dis2 > 10) {
         //printf("No solution.\n");
