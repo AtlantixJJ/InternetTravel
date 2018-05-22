@@ -8,7 +8,7 @@ def index(request):
     return render(request, 'index.html')
     # return HttpResponse(index_temp.render())
 
-
+### Get the nearest node on map
 def nearestNode(request):
     form_data = request.GET
     if request.method == 'GET' and 'location' in form_data:
@@ -26,7 +26,7 @@ def nearestNode(request):
             return HttpResponse('{}')
     return HttpResponse('{}')
 
-
+### Search for taxi
 def query(request):
     form_data = request.GET
     if request.method == 'GET' and 'srcId' in form_data and 'dstId' in form_data:

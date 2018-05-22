@@ -16,19 +16,19 @@ var srcMark = null,
   currentVehicleMark = null;
 
 var passIcon = new AMap.Icon({
-  size: new AMap.Size(16, 32),
+  size: new AMap.Size(16, 24),
   image: "static/img/mark_r.png",
-  imageSize: new AMap.Size(16, 32)
+  imageSize: new AMap.Size(16, 24)
 });
 var carIcon = new AMap.Icon({
-  size: new AMap.Size(16, 32),
+  size: new AMap.Size(16, 246),
   image: "static/img/mark_b.png",
-  imageSize: new AMap.Size(16, 32)
+  imageSize: new AMap.Size(16, 24)
 });
 var carActivedIcon = new AMap.Icon({
-  size: new AMap.Size(16, 32),
-  image: "static/img/mark_r.png",
-  imageSize: new AMap.Size(16, 32)
+  size: new AMap.Size(16, 24),
+  image: "static/img/mark_b.png",
+  imageSize: new AMap.Size(16, 24)
 });
 
 function isSameNode(a, b) {
@@ -75,8 +75,6 @@ function showVehicles(cars) {
   cars.forEach((car, i) => {
     if (!carMarks[i]) {
       carMarks[i] = newMark(car.location, carIcon);
-      carMarks[i].setOffset(new AMap.Pixel(-8, -16));
-      carMarks[i].setzIndex(99);
 
       AMap.event.addListener(carMarks[i], "click", event => {
         if (currentVehicleMark) currentVehicleMark.setIcon(carIcon);

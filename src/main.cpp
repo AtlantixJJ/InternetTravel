@@ -7,7 +7,7 @@ int main(int argc, char **argv)
 
     engine->init(argv[1]);
 
-    int srcId = 2333, dstId = 2334;
+    int srcId = 12345, dstId = 12354;
     const Node* src = engine->getMap()->getNode(srcId);
     const Node* dst = engine->getMap()->getNode(dstId);
     SolutionList res = engine->query(src, dst);

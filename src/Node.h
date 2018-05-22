@@ -7,37 +7,31 @@
 
 #include "Const.h"
 
-struct Location
+struct Position
 {
-    Location(double x, double y) : x(x), y(y) {}
-
     double x, y;
 
-    double distanceTo2(const Location* loc) const
-    {
+    Position(double x, double y) : x(x), y(y) {}
+
+    double dist2(const Position* loc) const {
         return (x - loc->x) * (x - loc->x) + (y - loc->y) * (y - loc->y);
     }
 
-    double distanceTo(const Location* loc) const
+    double ED(const Position* loc) const
     {
-        return sqrt(distanceTo2(loc));
-    }
-
-    double ED(const Location* loc) const
-    {
-        constexpr double rad = Const::PI / 180;
         double theta =
-            cos(y * rad) * cos(loc->y * rad) * cos((x - loc->x) * rad) +
-            sin(y * rad) * sin(loc->y * rad);
+            cos(y * Const::RAD) * cos(loc->y * Const::RAD) * cos((x - loc->x) * Const::RAD) +
+            sin(y * Const::RAD) * sin(loc->y * Const::RAD);
         return Const::EARTH_RADIUS * acos(theta);
     }
+
 
     std::string toString() const;
 };
 
-struct Node : public Location
+struct Node : public Position
 {
-    Node(int id, double x, double y) : Location(x, y), id(id) {}
+    Node(int id, double x, double y) : Position(x, y), id(id) {}
 
     int id;
 };
