@@ -31,10 +31,6 @@ var carActivedIcon = new AMap.Icon({
   imageSize: new AMap.Size(16, 32)
 });
 
-function getVehicleSpeed(zoom) {
-  return 10000 / Math.pow(2, (zoom - 8) / 1.5);
-}
-
 function isSameNode(a, b) {
   return a.location[0] === b.location[0] && a.location[1] === b.location[1];
 }
@@ -83,7 +79,9 @@ function showVehicles(cars) {
       carMarks[i].setzIndex(99);
 
       AMap.event.addListener(carMarks[i], "click", event => {
+        if (currentVehicleMark) currentVehicleMark.setIcon(carIcon);
         currentVehicleMark = carMarks[i];
+        carMarks[i].setIcon(carActivedIcon);
         showVehiclePath(i);
       });
     }
@@ -120,6 +118,7 @@ function showVehiclePath(index) {
 
 function clearMarks(clearSrcDst = false) {
   if (currentVehicleMark) {
+    currentVehicleMark.setIcon(carIcon);
     currentVehicleMark = null;
   }
   pathSimplifierIns && pathSimplifierIns.setData(null);
