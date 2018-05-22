@@ -93,9 +93,12 @@ function showPassengers(pass) {
   otherMarks.forEach(mark => mark.hide());
   pass.forEach((position, i) => {
     if (!otherMarks[i]) {
-      otherMarks[i] = newMark(position, 3, "客");
+      otherMarks[i] = new AMap.Marker({
+        icon: "static/img/mark_r.png",
+        position: position
+      });
     }
-    otherMarks[i].setPosition(position);
+    otherMarks[i].setMap(map);
     otherMarks[i].show();
   });
 }
