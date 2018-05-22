@@ -155,7 +155,7 @@ function onClickMap(position) {
   if (!src) {
     getNearestNode(position, data => {
       src = data;
-      if (!srcMark) srcMark = newMark(src.location, 2, "起");
+      if (!srcMark) srcMark = newMark(src.location, 7, "起");
       srcMark.setPosition(src.location);
       srcMark.show();
       $("#btn-action").prop("disabled", false);
@@ -164,7 +164,7 @@ function onClickMap(position) {
   } else if (!dst) {
     getNearestNode(position, data => {
       dst = data;
-      if (!dstMark) dstMark = newMark(dst.location, 0, "终");
+      if (!dstMark) dstMark = newMark(dst.location, 1, "终");
       dstMark.setPosition(dst.location);
       dstMark.show();
       $("#btn-action").prop("disabled", false);

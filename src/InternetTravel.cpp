@@ -107,8 +107,8 @@ SolutionList InternetTravel::query(const Node* src, const Node* dst)
     for (int i = 0; i < 5 && i < tmp.size(); i++) {
         //printf("Recover path.\n");
         vector<const Node*> path = {tmp[i].path[0]};
-        for (int i = 0; i < tmp[i].path.size() - 1; i ++)
-        m_map->recover_roadmap_path(tmp[i].path[i], tmp[i].path[i+1], path);
+        for (int j = 0; j < tmp[i].path.size() - 1; j ++)
+        m_map->recover_roadmap_path(tmp[i].path[j], tmp[i].path[j+1], path);
         //printf("Recover done.\n");
         tmp[i].path = path;
         res.push_back(tmp[i]);
