@@ -1,7 +1,7 @@
 var infoWindow,
   map,
   navi,
-  zooms = [8, 19],
+  zooms = [9, 18],
   center = { lng: 116.442263, lat: 39.835354 },
   pathSimplifierIns;
 
@@ -15,14 +15,19 @@ var srcMark = null,
   otherMarks = [],
   currentVehicleMark = null;
 
+var passIcon = new AMap.Icon({
+  size: new AMap.Size(16, 32),
+  image: "static/img/mark_r.png",
+  imageSize: new AMap.Size(16, 32)
+});
 var carIcon = new AMap.Icon({
   size: new AMap.Size(16, 32),
-  image: "static/img/car.png",
+  image: "static/img/mark_b.png",
   imageSize: new AMap.Size(16, 32)
 });
 var carActivedIcon = new AMap.Icon({
   size: new AMap.Size(16, 32),
-  image: "static/img/car_actived.png",
+  image: "static/img/mark_r.png",
   imageSize: new AMap.Size(16, 32)
 });
 
@@ -50,7 +55,7 @@ function newMark(position, icon, label) {
     topWhenClick: true,
     clickable: true,
     offset: new AMap.Pixel(-12, -27),
-    //icon: typeof icon == "number" ? markIcon(icon) : icon,
+    icon: typeof icon == "number" ? markIcon(icon) : icon,
     label:
       label !== undefined
         ? {
@@ -66,6 +71,7 @@ function showVehicles(cars) {
   cars.forEach((car, i) => {
     for (let j = 0; j < i; j++)
       if (isSameNode(cars[j], car)) {
+        // 车辆有时候会在同一个点上，需要把他们略微分开
         cars[i].location[0] += (Math.random() - 0.5) / 5000;
         cars[i].location[1] += (Math.random() - 0.5) / 5000;
       }
@@ -77,28 +83,24 @@ function showVehicles(cars) {
       carMarks[i].setzIndex(99);
 
       AMap.event.addListener(carMarks[i], "click", event => {
-        //if (currentVehicleMark) currentVehicleMark.setIcon(carIcon);
         currentVehicleMark = carMarks[i];
-        //carMarks[i].setIcon(carActivedIcon);
         showVehiclePath(i);
       });
     }
-    //carMarks[i].setAngle(car.angle);
     carMarks[i].setPosition(car.location);
     carMarks[i].show();
   });
 }
 
+// 车上的其他乘客
 function showPassengers(pass) {
   otherMarks.forEach(mark => mark.hide());
   pass.forEach((position, i) => {
     if (!otherMarks[i]) {
-      otherMarks[i] = new AMap.Marker({
-        icon: "static/img/mark_r.png",
-        position: position
-      });
+      otherMarks[i] = newMark(position, passIcon);
+      otherMarks[i].setIcon(passIcon);
     }
-    otherMarks[i].setMap(map);
+    otherMarks[i].setPosition(position);
     otherMarks[i].show();
   });
 }
@@ -114,17 +116,10 @@ function showVehiclePath(index) {
       path: car.path
     }
   ]);
-
-  //navi = pathSimplifierIns.createPathNavigator(0, {
-  //  loop: true,
-  //  speed: getVehicleSpeed(map.getZoom())
-  //});
-  //navi.start();
 }
 
 function clearMarks(clearSrcDst = false) {
   if (currentVehicleMark) {
-    //currentVehicleMark.setIcon(carIcon);
     currentVehicleMark = null;
   }
   pathSimplifierIns && pathSimplifierIns.setData(null);
@@ -222,22 +217,6 @@ function initPathSimplifier(PathSimplifier) {
         dirArrowStyle: true
       },
       pathLineHoverStyle: null
-      /*,
-      pathNavigatorStyle: {
-        width: 16,
-        height: 32,
-        strokeStyle: null,
-        fillStyle: null,
-        pathLinePassedStyle: {
-          strokeStyle: "#ffaa00"
-        },
-        content: PathSimplifier.Render.Canvas.getImageContent(
-          "static/img/car_actived.png",
-          function onload() {
-            pathSimplifierIns.renderLater();
-          }
-        )
-      }*/
     }
   });
 }

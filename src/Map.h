@@ -15,14 +15,19 @@ extern int tree_find_path(int S, int T, std::vector<int> &order);
 
 struct Edge
 {
-    Edge(const Node* a, const Node* b, int len) : a(a), b(b), len(len) {}
+    Edge(const Node* a, const Node* b, int len):
+        a(a), b(b), len(len) {}
 
     const Node *a, *b;
     int len;
 };
 
-typedef std::vector<const Edge*> EdgeList;
-
+/**
+ * Graph data structure
+ * 1. Load from file.
+ * 2. Get node by query nearest position.
+ * 3. Find shortest path.
+ * **/
 class Map
 {
 public:
@@ -30,43 +35,25 @@ public:
     virtual ~Map();
 
     /// Get the nearest node by (x, y)
-    const Node* getNode(double x, double y) const {
-        int i;
-        double mini = 10000000.0, dist= 10000000.0;
-        const Node *res = NULL, *cur = NULL;
-        for(i = 0; i < m_nodes.size(); i++) {
-            cur = m_nodes[i];
-            dist = ((x - cur->x)) * ((x - cur->x));
-            dist +=((y - cur->y)) * ((y - cur->y));
-
-            //dist = (x - cur.x) * (x - cur.x) + (y - cur.y) * (y - cury);
-            if(mini > dist) {
-                mini = dist;
-                res = cur;
-            }
-        }
-        //printf("%.10lf\n", mini);
-        //printf("%.10lf, %.10lf\n", res->x, res->y);
-        return res;
-    }
-
-    const Node* getNode(size_t id) const
-    {
+    const Node* getNode(double x, double y) const;
+    /// Get node by id
+    const Node* getNode(size_t id) const {
         return id >= m_node_count ? nullptr : m_nodes[id];
     }
 
-    double distance(const Node* a, const Node* b) const;
-
+    /// return a distance on a roadmap
     double roadmap_distance(const Node *a, const Node *b) const;
-
+    
+    /// recover a shortest path on roadmap given src and dst
     int recover_roadmap_path(const Node *a, const Node *b, std::vector<const Node*> &order) const;
 
+    /// Load from file
     void load(const std::string& nodeDataFile, const std::string& edgeDataFile, const std::string& indexFile);
 
 private:
     int m_node_count, m_edge_count;
     std::vector<const Node*> m_nodes;
-    EdgeList m_edges;
+    std::vector<const Edge*> m_edges;
 };
 
 #endif // MAP_H

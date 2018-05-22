@@ -44,9 +44,24 @@ void Map::load(const string& nodeDataFile, const string& edgeDataFile, const std
     tree_setup(edgeDataFile.c_str(), nodeDataFile.c_str(), indexFile.c_str(), true);
 }
 
-double Map::distance(const Node* a, const Node* b) const
-{
-    return a->earthDistanceTo(b);
+const Node* Map::getNode(double x, double y) const {
+    int i;
+    double mini = 10000000.0, dist= 10000000.0;
+    const Node *res = NULL, *cur = NULL;
+    for(i = 0; i < m_nodes.size(); i++) {
+        cur = m_nodes[i];
+        dist = ((x - cur->x)) * ((x - cur->x));
+        dist +=((y - cur->y)) * ((y - cur->y));
+
+        //dist = (x - cur.x) * (x - cur.x) + (y - cur.y) * (y - cury);
+        if(mini > dist) {
+            mini = dist;
+            res = cur;
+        }
+    }
+    //printf("%.10lf\n", mini);
+    //printf("%.10lf, %.10lf\n", res->x, res->y);
+    return res;
 }
 
 double Map::roadmap_distance(const Node* a, const Node* b) const

@@ -23,7 +23,7 @@ struct Location
         return sqrt(distanceTo2(loc));
     }
 
-    double earthDistanceTo(const Location* loc) const
+    double ED(const Location* loc) const
     {
         constexpr double rad = Const::PI / 180;
         double theta =

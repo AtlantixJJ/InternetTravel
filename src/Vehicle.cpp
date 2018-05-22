@@ -75,7 +75,7 @@ bool Vehicle::filter(const Node* src, const Node* dst,
         return false;
 
     /// If the pick-up distance is larger than 10 km, then discard
-    double d2 = map->distance(m_pos, src);
+    double d2 = m_pos->ED(src);
     return d2 <= 10;
 }
 
