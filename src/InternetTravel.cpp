@@ -56,7 +56,7 @@ void InternetTravel::loadCars(const string& dataFile)
 
 void InternetTravel::init(const string& dataDir)
 {
-    printf("Internet traffic system is starting...\n");
+    printf("Internet travel system is starting...\n");
 
     m_map->load(dataDir + "/" + NODE_FNAME, dataDir + "/" + EDGE_FNAME, dataDir + "/" + INDEX_FNAME);
     loadCars(dataDir + "/" + CAR_FNAME);

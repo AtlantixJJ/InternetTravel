@@ -1,30 +1,39 @@
-# Internet Traffic
+# 互联网出行项目
 
-Database Special Topic Training course final project.
+数据库训练项目。
 
-## Building
+## 编译
 
 ```
-mkdir build && cd build
+mkdir build
+cd build
 cmake ..
 make
 ```
 
-## Run
+## 本地测试
+
+需要调用`create_index`预先生成一个index文件：
 
 ```
-./main
+./create_index ../data ../index.data
 ```
 
-## Run as web server
+然后调用main程序进行本地测试：
+
+```
+./main ../data ../data/index.data
+```
+
+## 作为服务器运行
 
 ```
 cd server
 python manage.py runserver [0.0.0.0:PORT]
 ```
 
-The default port is `8000`.
+## 依赖
 
-## Dependency
+- METIS库，已经包含在thirdparty中。
 
-`zlib` in Ubuntu.
+- GPTree库，已经修改并放在了lib/GPTree.cpp中。
