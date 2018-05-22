@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <cstdio>
 #include <assert.h>
-
+#include "Const.h"
 #include "InternetTravel.h"
 
 using namespace std;
@@ -11,7 +11,21 @@ const char NODE_FNAME[] = "road.cnode";
 const char EDGE_FNAME[] = "road.nedge";
 const char INDEX_FNAME[] = "index.data";
 
-InternetTravel::InternetTravel() : m_map(new Map()) {}
+InternetTravel::InternetTravel() : m_map(new Map()) {
+    for(int i = 0; i <= 5; i ++){
+        Const::write_permutations(0, i);
+        Const::fac_cnt = 0;
+        /*
+        for(int j = 0; j < Const::FACTORIAL[i]; j ++) {
+            for(int k = 0; k < i; k ++) {
+                printf("%d ", Const::PERMUTATIONS[i][j][k]);
+            }
+            printf("\n");
+        }
+        printf("-----\n");
+        */
+    }
+}
 
 InternetTravel::~InternetTravel()
 {
@@ -77,15 +91,18 @@ SolutionList InternetTravel::query(const Node* src, const Node* dst)
 {
     SolutionList tmp, res;
     for (auto car : m_cars) {
+        //printf("Car query.\n");
         Solution sol = car->query(src, dst, m_map);
         if (sol.is_valid()) {
-            printf("Recover path.\n");
+            //printf("Recover path.\n");
             vector<const Node*> path = {sol.path[0]};
             for (int i = 0; i < sol.path.size() - 1; i ++)
                 m_map->recover_roadmap_path(sol.path[i], sol.path[i+1], path);
-            printf("Recover done.\n");
+            //printf("Recover done.\n");
             sol.path = path;
             tmp.push_back(sol);
+        } else {
+            //printf("Invalid.\n");
         }
         if (tmp.size() >= 100)
             break;

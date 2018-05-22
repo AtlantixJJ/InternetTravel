@@ -50,7 +50,7 @@ function newMark(position, icon, label) {
     topWhenClick: true,
     clickable: true,
     offset: new AMap.Pixel(-12, -27),
-    icon: typeof icon == "number" ? markIcon(icon) : icon,
+    //icon: typeof icon == "number" ? markIcon(icon) : icon,
     label:
       label !== undefined
         ? {
@@ -77,13 +77,13 @@ function showVehicles(cars) {
       carMarks[i].setzIndex(99);
 
       AMap.event.addListener(carMarks[i], "click", event => {
-        if (currentVehicleMark) currentVehicleMark.setIcon(carIcon);
+        //if (currentVehicleMark) currentVehicleMark.setIcon(carIcon);
         currentVehicleMark = carMarks[i];
-        carMarks[i].setIcon(carActivedIcon);
+        //carMarks[i].setIcon(carActivedIcon);
         showVehiclePath(i);
       });
     }
-    carMarks[i].setAngle(car.angle);
+    //carMarks[i].setAngle(car.angle);
     carMarks[i].setPosition(car.location);
     carMarks[i].show();
   });
@@ -112,17 +112,16 @@ function showVehiclePath(index) {
     }
   ]);
 
-  navi = pathSimplifierIns.createPathNavigator(0, {
-    loop: true,
-    speed: getVehicleSpeed(map.getZoom())
-  });
-
-  navi.start();
+  //navi = pathSimplifierIns.createPathNavigator(0, {
+  //  loop: true,
+  //  speed: getVehicleSpeed(map.getZoom())
+  //});
+  //navi.start();
 }
 
 function clearMarks(clearSrcDst = false) {
   if (currentVehicleMark) {
-    currentVehicleMark.setIcon(carIcon);
+    //currentVehicleMark.setIcon(carIcon);
     currentVehicleMark = null;
   }
   pathSimplifierIns && pathSimplifierIns.setData(null);
@@ -146,7 +145,7 @@ function onClickActionButton() {
     getSolution(src.id, dst.id, data => {
       cars = data.cars;
       if (!cars.length) {
-        alert("没有合适的出租车！");
+        alert("找不到出租车！");
         return;
       }
       showVehicles(cars);
@@ -174,7 +173,7 @@ function onClickMap(position) {
       dstMark.setPosition(dst.location);
       dstMark.show();
       $("#btn-action").prop("disabled", false);
-      $("#btn-action").text("查询");
+      $("#btn-action").text("拼车");
     });
   }
 }
@@ -186,12 +185,6 @@ function initMap() {
     zooms: zooms
   });
 
-  map.on("complete", function() {
-    map.plugin(["AMap.ToolBar", "AMap.Scale"], function() {
-      map.addControl(new AMap.ToolBar());
-      map.addControl(new AMap.Scale());
-    });
-  });
   map.on("click", function(e) {
     onClickMap([e.lnglat.getLng(), e.lnglat.getLat()]);
   });
@@ -221,11 +214,12 @@ function initPathSimplifier(PathSimplifier) {
     autoSetFitView: false,
     renderOptions: {
       pathLineStyle: {
-        strokeStyle: "#22aa99",
+        strokeStyle: "#99aa22",
         lineWidth: 6,
         dirArrowStyle: true
       },
-      pathLineHoverStyle: null,
+      pathLineHoverStyle: null
+      /*,
       pathNavigatorStyle: {
         width: 16,
         height: 32,
@@ -240,7 +234,7 @@ function initPathSimplifier(PathSimplifier) {
             pathSimplifierIns.renderLater();
           }
         )
-      }
+      }*/
     }
   });
 }

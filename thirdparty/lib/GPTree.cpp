@@ -12,7 +12,7 @@
 #include <queue>
 #include <sys/time.h>
 #include <metis.h>
-int times[10];//辅助计时变量；
+
 int cnt_type0,cnt_type1;
 
 using namespace std;
@@ -1042,8 +1042,10 @@ struct G_Tree
 		printf("Tree size: %d %d %d\n", id_in_node.size(), car_in_node.size(), car_offset.size());
 		
 		node=new Node[G.n*2+2];
-		for(int i=0;i<node_size;i++)
+		for(int i=0;i<node_size;i++) {
+			if(i % 5000 == 0) printf("%d Node loaded.\n", i);
 			node[i].load();
+		}
 	}
 	void write()
 	{
@@ -1331,7 +1333,6 @@ struct G_Tree
 			dist2=dist1;
 			return;
 		}
-		times[5]-=clock();
 		dist2.clear();
 		int y=node[x].father;
 		while(dist2.size()<node[y].borders.size())dist2.push_back(INF);
@@ -1341,15 +1342,11 @@ struct G_Tree
 		//printf("dist2:");save_vector(dist2);
 		int **dist=node[y].dist.a;
 		vector<int>begin,end;//已算出的序列编号,未算出的序列编号
-		times[5]+=clock();
-		times[6]-=clock();
 		for(int i=0;i<dist2.size();i++)
 		{
 			if(dist2[i]<INF)begin.push_back(i);
 			else if(node[y].border_in_father[i]!=-1)end.push_back(i);
 		}
-		times[6]+=clock();
-		times[7]-=clock();
 		for(int i=0;i<(int)begin.size();i++)
 		{
 			int i_=begin[i];
@@ -1359,12 +1356,10 @@ struct G_Tree
 				dist2[end[j]]=dist2[i_]+dist[i_][end[j]];
 			}
 		}
-		times[7]+=clock();
 	}*/
 	void push_borders_up(int x, vector<int> &dist1, int type)//将S到结点x边界点的最短路长度记录在dist1中，计算S到x.father真实border的距离更新dist1 type==0上推,type==1下推
 	{
 		if (node[x].father == 0)return;
-		//times[5] -= clock();
 		int y = node[x].father;
 		vector<int>dist2(node[y].borders.size(), INF);
 		for (int i = 0; i<node[x].borders.size(); i++)
@@ -1377,15 +1372,11 @@ struct G_Tree
 		begin = new int[node[x].borders.size()];
 		end = new int[node[y].borders.size()];
 		int tot0 = 0, tot1 = 0;
-		//times[5] += clock();
-		//times[6] -= clock();
 		for (int i = 0; i<dist2.size(); i++)
 		{
 			if (dist2[i]<INF)begin[tot0++] = i;
 			else if (node[y].border_in_father[i] != -1)end[tot1++] = i;
 		}
-		//times[6] += clock();
-		//times[7] -= clock();
 		if (type == 0)
 		{
 			for (int i = 0; i<tot0; i++)
@@ -1426,7 +1417,6 @@ struct G_Tree
 		}
 		}
 		*/
-		//times[7] += clock();
 		dist1 = dist2;
 		delete[] begin;
 		delete[] end;
@@ -1584,7 +1574,6 @@ struct G_Tree
 	void push_borders_up_path(int x, vector<int> &dist1)//将S到结点x边界点的最短路长度记录在dist1中，计算S到x.father真实border的距离更新dist1,并将到x.father的方案记录到x.father.path_record中(>=0表示结点，<0表示传递于那个结点儿子,-INF表示无前驱)
 	{
 		if (node[x].father == 0)return;
-		times[5] -= clock();
 		int y = node[x].father;
 		vector<int>dist3(node[y].borders.size(), INF);
 		vector<int> *order = &node[y].path_record;
@@ -1603,15 +1592,11 @@ struct G_Tree
 		begin = new int[node[x].borders.size()];
 		end = new int[node[y].borders.size()];
 		int tot0 = 0, tot1 = 0;
-		times[5] += clock();
-		times[6] -= clock();
 		for (int i = 0; i<dist3.size(); i++)
 		{
 			if (dist3[i]<INF)begin[tot0++] = i;
 			else if (node[y].border_in_father[i] != -1)end[tot1++] = i;
 		}
-		times[6] += clock();
-		times[7] -= clock();
 		for (int i = 0; i<tot0; i++)
 		{
 			int i_ = begin[i];
@@ -1624,7 +1609,6 @@ struct G_Tree
 				}
 			}
 		}
-		times[7] += clock();
 		dist1 = dist3;
 		delete[] begin;
 		delete[] end;
@@ -1839,8 +1823,6 @@ struct G_Tree
 				}
 			}
 		}
-		times[1] += clock();
-		times[0] += clock();
 		return MIN;
 		//cout<<"QY5";
 	}

@@ -2,27 +2,14 @@
 #include "Map.h"
 
 using namespace std;
+using namespace Const;
 
-/// Directly store all the permutations of n <= 5
-const int FACTORIAL[5] = {1, 1, 2, 6, 24};
-const int PERMUTATIONS[5][24][4] = {
-    {},
-    {{0}},
-    {{0, 1}, {1, 0}},
-    {{0, 1, 2}, {0, 2, 1}, {1, 0, 2}, {1, 2, 0}, {2, 0, 1}, {2, 1, 0}},
-    {
-        {0, 1, 2, 3}, {0, 1, 3, 2}, {0, 2, 1, 3}, {0, 2, 3, 1}, {0, 3, 1, 2},
-        {0, 3, 2, 1}, {1, 0, 2, 3}, {1, 0, 3, 2}, {1, 2, 0, 3}, {1, 2, 3, 0},
-        {1, 3, 0, 2}, {1, 3, 2, 0}, {2, 0, 1, 3}, {2, 0, 3, 1}, {2, 1, 0, 3},
-        {2, 1, 3, 0}, {2, 3, 0, 1}, {2, 3, 1, 0}, {3, 0, 1, 2}, {3, 0, 2, 1},
-        {3, 1, 0, 2}, {3, 1, 2, 0}, {3, 2, 0, 1}, {3, 2, 1, 0},
-    },
-};
 
 Vehicle::Vehicle(int id, const Node* pos, const std::vector<const Node*>& passengers)
     : m_id(id), m_passenger_count(passengers.size()), m_pos(pos),
       m_passengers(passengers)
 {
+
 }
 
 Vehicle::~Vehicle() {}
@@ -41,6 +28,7 @@ double Vehicle::getMinDist(vector<int>& order, int srcId,
                            const double all_dist[6][6])
 {
     int prev, n = order.size();
+    int srcPos, dstPos;
     double res = Const::INF;
     vector<int> res_order = order;
 
@@ -50,8 +38,20 @@ double Vehicle::getMinDist(vector<int>& order, int srcId,
         vector<int> temp;
         double d = 0;
         prev = srcId;
+        srcPos = -1;
+        dstPos = -2;
         for (int j = 0; j < n; j++) {
             int cur = order[PERMUTATIONS[n][i][j]];
+            
+            // make sure that passenger src < dst
+            if(cur == 1) srcPos = j;
+            else if(cur == 2) dstPos = j;
+            if(srcPos >=0 && dstPos >= 0)
+                if(srcPos > dstPos) {
+                    d = Const::INF;
+                    break;
+                }
+            
             d += all_dist[prev][cur];
             if (d >= res) break; // early exit
             temp.push_back(cur);
@@ -81,7 +81,7 @@ bool Vehicle::filter(const Node* src, const Node* dst,
 
 Solution Vehicle::query(const Node* src, const Node* dst, const Map* map) const
 {
-    printf("Car query.\n");
+    //printf("Car query.\n");
     /// filter not passed, return an empty solution
     if (!filter(src, dst, map))
         return Solution();
@@ -127,12 +127,12 @@ Solution Vehicle::query(const Node* src, const Node* dst, const Map* map) const
     double detour_dis2 = d3 - d4;
 
     if (detour_dis1 > 10 || detour_dis2 > 10) {
-        printf("No solution.\n");
+        //printf("No solution.\n");
         return Solution();
     }
 
     std::vector<const Node*> pass_order = {m_pos};
-    printf("Permute done.\n");
+    //printf("Permute done.\n");
     for (auto i : order)
     {
         if (i == 1)
@@ -142,6 +142,6 @@ Solution Vehicle::query(const Node* src, const Node* dst, const Map* map) const
         else if (i >= 3)
             pass_order.push_back(m_passengers[i - 3]);
     }
-    printf("Vehicle done.\n");
+    //printf("Vehicle done.\n");
     return Solution(this, pass_order, d2, detour_dis1, detour_dis2);
 }
