@@ -15,5 +15,8 @@
 #action-panel {
   position: absolute;
   bottom: 30px;
-  right: 30px;
+  /* right: 30px; */
+  width:200px;
+  left: 50%;
+  margin-left: -100px;
 }

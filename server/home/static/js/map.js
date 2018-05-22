@@ -55,8 +55,8 @@ function newMark(position, icon, label) {
     label:
       label !== undefined
         ? {
-            content: `<div class="mark-label">${label}</div>`
-          }
+          content: `<div class="mark-label">${label}</div>`
+        }
         : null
   });
 }
@@ -180,11 +180,11 @@ function initMap() {
     zooms: zooms
   });
 
-  map.on("click", function(e) {
+  map.on("click", function (e) {
     onClickMap([e.lnglat.getLng(), e.lnglat.getLat()]);
   });
 
-  AMap.event.addListener(map, "zoomend", function() {
+  AMap.event.addListener(map, "zoomend", function () {
     if (navi) navi.setSpeed(getVehicleSpeed(map.getZoom()));
   });
   document
@@ -199,10 +199,10 @@ function initPathSimplifier(PathSimplifier) {
   pathSimplifierIns = new PathSimplifier({
     zIndex: 100,
     map: map,
-    getPath: function(pathData, pathIndex) {
+    getPath: function (pathData, pathIndex) {
       return pathData.path;
     },
-    getHoverTitle: function(pathData, pathIndex, pointIndex) {
+    getHoverTitle: function (pathData, pathIndex, pointIndex) {
       return null;
     },
     clickToSelectPath: false,
@@ -244,7 +244,7 @@ function getSolution(srcId, dstId, callback) {
 $(document).ready(() => {
   initMap();
 
-  AMapUI.load(["ui/misc/PathSimplifier"], function(PathSimplifier) {
+  AMapUI.load(["ui/misc/PathSimplifier"], function (PathSimplifier) {
     initPathSimplifier(PathSimplifier);
   });
 });
