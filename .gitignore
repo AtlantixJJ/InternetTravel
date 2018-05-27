@@ -7,7 +7,6 @@ data/road.cnode
 data/road.nedge
 [Bb]uild/
 tests/
-report/
 .vscode
 .DS_Store
 
