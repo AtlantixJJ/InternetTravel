@@ -25,7 +25,11 @@ make
 ./main ../data ../data/index.data
 ```
 
+正确的结果是没有输出，正常结束执行。
+
 ## 作为服务器运行
+
+需要先生成index.data。
 
 ```
 cd server

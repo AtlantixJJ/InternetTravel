@@ -19,8 +19,6 @@ public:
 
     const std::vector<const Node*>* getPassenger() const { return &m_passengers; }
 
-    void print() const;
-
     Solution query(const Node* src, const Node* dst, const Map* map) const;
 
     /// Given the source, enumerate the arriving order, and store in order

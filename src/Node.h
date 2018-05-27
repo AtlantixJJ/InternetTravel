@@ -24,9 +24,6 @@ struct Position
             sin(y * Const::RAD) * sin(loc->y * Const::RAD);
         return Const::EARTH_RADIUS * acos(theta);
     }
-
-
-    std::string toString() const;
 };
 
 struct Node : public Position
