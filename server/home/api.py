@@ -6,7 +6,7 @@ from math import atan2, pi
 pyengine.init('../data')
 
 
-def getNearestNode(lon, lat):
+def get_nearest_node(lon, lat):
     res = pyengine.get_node_in_map(lon, lat)
     return res
 

@@ -9,12 +9,12 @@ def index(request):
     # return HttpResponse(index_temp.render())
 
 ### Get the nearest node on map
-def nearestNode(request):
+def nearest_node(request):
     form_data = request.GET
     if request.method == 'GET' and 'location' in form_data:
         try:
             lon, lat = map(float, form_data['location'].split(','))
-            id, lon, lat = api.getNearestNode(lon, lat)
+            id, lon, lat = api.get_nearest_node(lon, lat)
 
             return HttpResponse(json.dumps({
                 'succes': True,

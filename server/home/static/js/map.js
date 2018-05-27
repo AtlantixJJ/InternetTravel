@@ -117,7 +117,7 @@ function onClickMap(e) {
   $('#btn-action').prop('disabled') &&
     (src
       ? dst ||
-        getNearestNode(e, function(e) {
+        get_nearest_node(e, function(e) {
           (dst = e),
             dstMark || (dstMark = newMark(dst.location, 1, '终')),
             dstMark.setPosition(dst.location),
@@ -125,7 +125,7 @@ function onClickMap(e) {
             $('#btn-action').prop('disabled', !1),
             $('#btn-action').text('拼车');
         })
-      : getNearestNode(e, function(e) {
+      : get_nearest_node(e, function(e) {
           (src = e),
             srcMark || (srcMark = newMark(src.location, 7, '起')),
             srcMark.setPosition(src.location),
@@ -172,7 +172,7 @@ function initPathSimplifier(e) {
     },
   });
 }
-function getNearestNode(e, n) {
+function get_nearest_node(e, n) {
   $.get('nearestnode', { location: e.join(',') }, n, 'json');
 }
 function getSolution(e, n, t) {

@@ -19,5 +19,5 @@ from . import views
 urlpatterns = [
     path('', views.index, name='index'),
     path('query', views.query, name='query'),
-    path('nearestnode', views.nearestNode, name='nearestNode'),
+    path('nearestnode', views.nearest_node, name='nearest_node'),
 ]
