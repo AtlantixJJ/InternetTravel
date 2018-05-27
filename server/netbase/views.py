@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 import json
-import home.api as api
+import netbase.api as api
 
 
 def index(request):
