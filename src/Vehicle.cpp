@@ -14,16 +14,6 @@ Vehicle::Vehicle(int id, const Node* pos, const std::vector<const Node*>& passen
 
 Vehicle::~Vehicle() {}
 
-void Vehicle::print() const
-{
-    printf("car #%d: %d %s\n", m_id, m_passenger_count,
-           m_pos->toString().c_str());
-    printf("\t[ ");
-    for (auto node : m_passengers)
-        printf("%s, ", node->toString().c_str());
-    printf("]\n");
-}
-
 double Vehicle::getMinDist(vector<int>& order, int srcId,
                            const double all_dist[6][6])
 {

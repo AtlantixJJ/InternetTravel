@@ -30,8 +30,6 @@ struct Solution
 
     double value; // detour_dis1 + detour_dis2
 
-    void print() const;
-
     bool is_valid() const { return dis <= 10; }
 
     bool operator<(const Solution& sol) const {

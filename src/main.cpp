@@ -12,9 +12,6 @@ int main(int argc, char **argv)
     const Node* dst = engine->getMap()->getNode(dstId);
     SolutionList res = engine->query(src, dst);
 
-    for (auto sol : res)
-        sol.print();
-    printf("Total sol: %d\n", res.size());
     delete engine;
 
 
